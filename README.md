@@ -1,17 +1,16 @@
 # timedwallpaper
 a way to create timed wallpapers using rust as the language and feh to set the wallpaper
 
-USAGE:
+### USAGE:
     timedwallpaper [configfolder] [updatedelay]
 
-INFO:
+### INFO:
     [configfolder]: a folder containing the files:
                     - wallpaper.config
                       file containing time-wallpaper relationship
                       ! time shortcuts have to be followed with :[defaulttime]
                     - data.ini
                       file containing additional data for extra functionality
-    
     [updatedelay]: number of seconds to wait between updates
     
     time shortcuts:
@@ -22,7 +21,7 @@ INFO:
         - #te -> twilight end
         - #sm -> solar midnight
 
-CONFIG EXAMPLE:
+### CONFIG EXAMPLE:
     wallpaper.config:
         00_00 = img1.jpg, img2.jpg
         #sr:06_00 = img3.jpg
