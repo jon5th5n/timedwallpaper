@@ -24,7 +24,7 @@ fn main() {
 
     let additional_data = parse_data(format!("{working_directory}/data.ini").as_str());
 
-    let cycle;
+    let mut cycle;
     // get sun data if online and parse cycle config
     if is_online {
         let sun_data = get_sun_data(additional_data.lat, additional_data.lng);
@@ -35,6 +35,12 @@ fn main() {
 
     //-- loop ---
     loop {
+        // if now online but wasn't online before recalculate timestamps with suntimes
+        if !is_online && online::check(None).is_ok() {
+            let sun_data = get_sun_data(additional_data.lat, additional_data.lng);
+            cycle = parse_cycle_online(format!("{working_directory}/wallpaper.config").as_str(), sun_data);
+        }
+
         let now = Local::now().time();
 
         // get filepath of image for this time
