@@ -1,17 +1,20 @@
+mod help;
+use crate::help::HELP;
+
 mod parseconfigs;
 use crate::parseconfigs::*;
 
 mod sundata;
 use crate::sundata::*;
 
-use std::{process::Command, fs, env};
+use std::{process::Command, env};
 use chrono::prelude::*;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
 
     if args.len() != 3 || args[1] == "-h" || args[1] == "--help" {
-        println!("{}", fs::read_to_string("./assets/help.txt").unwrap());
+        println!("{HELP}");
         return
     }
 

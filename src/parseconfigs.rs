@@ -1,11 +1,26 @@
+use crate::help::HELP;
+
 use crate::sundata::get_sun_data_key_from_shortcut;
 use std::{fs, collections::HashMap};
 use chrono::{prelude::*, Duration};
 use ini::Ini;
 
 
+fn panic_help(s: &str) -> ! {
+    println!("\n{s}");
+    println!("{HELP}");
+    panic!("{s}");
+}
+
+
 pub fn parse_cycle_online(filepath: &str, sun_data: HashMap<String, NaiveTime>) -> Vec<(NaiveTime, String)> {
-    let config = fs::read_to_string(filepath).unwrap().replace(" ", "");
+    let config = {
+        let this = fs::read_to_string(filepath);
+        match this {
+            Ok(t) => t,
+            Err(_e) => panic_help("directory doesn't contain a file named wallpaper.config"),
+        }
+    }.replace(" ", "");
 
     // whole config => single entries
     let config: Vec<&str> = config.split('\n').collect();
@@ -57,7 +72,13 @@ pub fn parse_cycle_online(filepath: &str, sun_data: HashMap<String, NaiveTime>) 
 }
 
 pub fn parse_cycle_offline(filepath: &str) -> Vec<(NaiveTime, String)> {
-    let config = fs::read_to_string(filepath).unwrap().replace(" ", "");
+    let config = {
+        let this = fs::read_to_string(filepath);
+        match this {
+            Ok(t) => t,
+            Err(_e) => panic_help("directory doesn't contain a file named wallpaper.config"),
+        }
+    }.replace(" ", "");
 
     // whole config => single entries
     let config: Vec<&str> = config.split('\n').collect();
@@ -113,10 +134,36 @@ pub struct AdditionalData {
 }
 
 pub fn parse_data(filepath: &str) -> AdditionalData {
-    let config_data = Ini::load_from_file(filepath).unwrap();
-    let config_general = config_data.section(Some("General")).unwrap();
-    let lat = config_general.get("latitude").unwrap().parse::<f32>().unwrap();
-    let lng = config_general.get("longitude").unwrap().parse::<f32>().unwrap();
+    let config_data = {
+        let this = Ini::load_from_file(filepath);
+        match this {
+            Ok(t) => t,
+            Err(_e) => panic_help("directory doesn't contain a file named data.ini"),
+        }
+    };
+
+    let config_general = {
+        let this = config_data.section(Some("General"));
+        match this {
+            Some(val) => val,
+            None => panic_help("data.ini file doesn't include General section"),
+        }
+    };
+
+    let lat = {
+        let this = config_general.get("latitude");
+        match this {
+            Some(val) => val,
+            None => panic_help("data.ini file doesn't include latitude inside General section"),
+        }
+    }.parse::<f32>().unwrap();
+    let lng = {
+        let this = config_general.get("longitude");
+        match this {
+            Some(val) => val,
+            None => panic_help("data.ini file doesn't include longitude inside General section"),
+        }
+    }.parse::<f32>().unwrap();
 
     AdditionalData { lat, lng }
 }

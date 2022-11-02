@@ -23,7 +23,13 @@ struct ApiData {
 
 pub fn get_sun_data(lat: f32, lng: f32) -> HashMap<String, NaiveTime> {
 
-    let res_string = reqwest::blocking::get(format!("https://api.sunrise-sunset.org/json?lat={lat}&lng={lng}")).unwrap().text().unwrap();
+    let res_string = {
+        let this = reqwest::blocking::get(format!("https://api.sunrise-sunset.org/json?lat={lat}&lng={lng}"));
+        match this {
+            Ok(t) => t,
+            Err(_e) => panic!("unable to get sundata from api"),
+        }
+    }.text().unwrap();
     let res: ApiData = serde_json::from_str(res_string.as_str()).unwrap();
     let res = res.results;
 

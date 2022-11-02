@@ -1,3 +1,4 @@
+pub const HELP: &str = r#"
 create timed wallpapers
 
 USAGE:
@@ -31,4 +32,5 @@ CONFIG EXAMPLE:
     data.ini:
         [Sun]
         latitude = 69.187
-        longitude = 1.02
+        longitude = 1.02   
+"#;
