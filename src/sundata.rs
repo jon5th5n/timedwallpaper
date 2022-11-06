@@ -21,13 +21,16 @@ struct ApiData {
     status: String,
 }
 
-pub fn get_sun_data(lat: f32, lng: f32) -> HashMap<String, NaiveTime> {
+pub fn get_sun_data(lat: f32, lng: f32) -> Option<HashMap<String, NaiveTime>> {
 
     let res_string = {
         let this = reqwest::blocking::get(format!("https://api.sunrise-sunset.org/json?lat={lat}&lng={lng}"));
         match this {
             Ok(t) => t,
-            Err(_e) => panic!("unable to get sundata from api"),
+            Err(e) => {
+                println!("{e}\nunable to get sundata from api... using default timestamps");
+                return None
+            },
         }
     }.text().unwrap();
     let res: ApiData = serde_json::from_str(res_string.as_str()).unwrap();
@@ -64,5 +67,5 @@ pub fn get_sun_data(lat: f32, lng: f32) -> HashMap<String, NaiveTime> {
     // add solar_midnight (solar_noon + 12h)
     results.insert("solar_midnight".to_string(), results.get("solar_noon").unwrap().clone() + Duration::hours(12));
 
-    results
+    Some(results)
 }

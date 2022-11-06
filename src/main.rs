@@ -31,7 +31,10 @@ fn main() {
     // get sun data if online and parse cycle config
     if is_online {
         let sun_data = get_sun_data(additional_data.lat, additional_data.lng);
-        cycle = parse_cycle_online(format!("{working_directory}/wallpaper.config").as_str(), sun_data);
+        match sun_data {
+            Some(sd) => cycle = parse_cycle_online(format!("{working_directory}/wallpaper.config").as_str(), sd),
+            None => cycle = parse_cycle_offline(format!("{working_directory}/wallpaper.config").as_str(),),
+        }
     } else {
         cycle = parse_cycle_offline(format!("{working_directory}/wallpaper.config").as_str(),);
     }
@@ -41,7 +44,10 @@ fn main() {
         // if now online but wasn't online before recalculate timestamps with suntimes
         if !is_online && online::check(None).is_ok() {
             let sun_data = get_sun_data(additional_data.lat, additional_data.lng);
-            cycle = parse_cycle_online(format!("{working_directory}/wallpaper.config").as_str(), sun_data);
+            match sun_data {
+                Some(sd) => cycle = parse_cycle_online(format!("{working_directory}/wallpaper.config").as_str(), sd),
+                None => cycle = parse_cycle_offline(format!("{working_directory}/wallpaper.config").as_str(),),
+            }
         }
 
         let now = Local::now().time();
