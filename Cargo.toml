@@ -1,11 +1,14 @@
 [package]
 name = "timedwallpaper"
-version = "0.1.0"
+author = "vequa"
+version = "0.2.4"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+clap = { version = "4.0.22", features = ["derive"] }
+wallpaper = "3.2.0"
 chrono = "0.4.22"
 reqwest = { version = "0.11.12", features = ["blocking"] }
 serde_json = "1.0.86"

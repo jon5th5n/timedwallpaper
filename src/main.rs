@@ -1,5 +1,6 @@
-mod help;
-use crate::help::HELP;
+mod args;
+use crate::args::Args;
+use clap::Parser;
 
 mod parseconfigs;
 use crate::parseconfigs::*;
@@ -7,20 +8,15 @@ use crate::parseconfigs::*;
 mod sundata;
 use crate::sundata::*;
 
-use std::{process::Command, env};
+use wallpaper;
 use chrono::prelude::*;
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() != 3 || args[1] == "-h" || args[1] == "--help" {
-        println!("{HELP}");
-        return
-    }
+    let args = Args::parse();
 
     //-- init ----
-    let working_directory = args[1].clone();
-    let update_delay: u64 = args[2].parse().unwrap();
+    let working_directory = args.folder;
+    let update_delay: u64 = args.delay;
 
     let is_online = online::check(None).is_ok();
     let mut current_wallpaper: String = "".to_string();
@@ -66,7 +62,7 @@ fn main() {
         }
 
         if format!("{working_directory}/{filepath}") != current_wallpaper {
-            set_wallpaper(format!("{working_directory}/{filepath}").as_str(), "fill");
+            set_wallpaper(format!("{working_directory}/{filepath}").as_str());
             current_wallpaper = format!("{working_directory}/{filepath}");
         }
             
@@ -74,16 +70,18 @@ fn main() {
     }
 }
 
-fn set_wallpaper(filepath: &str, option: &str) {
-    let out = Command::new("sh")
-            .arg("-c")
-            .arg(format!("feh --bg-{option} {filepath}"))
-            .output()
-            .expect("failed to execute process");
+fn set_wallpaper(filepath: &str) {
+    wallpaper::set_from_path(filepath).unwrap();
+
+    // let out = Command::new("sh")
+    //         .arg("-c")
+    //         .arg(format!("feh --bg-{option} {filepath}"))
+    //         .output()
+    //         .expect("failed to execute process");
     
-    if out.stderr.len() != 0 {
-        println!("{}", std::str::from_utf8(&out.stderr).unwrap());
-        return
-    }
+    // if out.stderr.len() != 0 {
+    //     println!("{}", std::str::from_utf8(&out.stderr).unwrap());
+    //     return
+    // }
     println!("changed wallpaper to {filepath}");
 }

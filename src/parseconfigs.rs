@@ -1,5 +1,3 @@
-use crate::help::HELP;
-
 use crate::sundata::get_sun_data_key_from_shortcut;
 use std::{fs, collections::HashMap};
 use chrono::{prelude::*, Duration};
@@ -8,7 +6,20 @@ use ini::Ini;
 
 fn panic_help(s: &str) -> ! {
     println!("\n{s}");
-    println!("{HELP}");
+    println!(r#"
+CONFIG EXAMPLES:
+
+wallpaper.config:
+    00_00 = img1.jpg, img2.jpg
+    #sr:06_00 = img3.jpg
+    12_00 = img4.jpg, img5.jpg, img6.jpg
+    #ss:21_00 = img7.jpg, img8.jpg
+
+data.ini:
+    [Sun]
+    latitude = 69.187
+    longitude = 1.02
+    "#);
     panic!("{s}");
 }
 
